@@ -1,23 +1,25 @@
 import { playGame } from './game-play.js';
 
-export function setupGame (size, gameContainer, initState, passCount) {
+export function setupGame (size, gameContainer, initState) {
     const grid = document.createElement('div');
     grid.classList.add('grid')
+    let state = [];
 
     renderTiles();
     setupPlayBtn();
-
-    const state = [];
-
-    for(let i = 0; i < size; i++) {
-        const row = [];
-        state.push(row);
-        for(let j = 0; j < size; j++) {
-            const cell = initState[i] ? initState[i][j] ?? 0 : 0;
-            row.push(cell);
+    initializeState();
+    colorTiles(state);
+    
+    function initializeState() {
+        for(let i = 0; i < size; i++) {
+            const row = [];
+            state.push(row);
+            for(let j = 0; j < size; j++) {
+                const cell = initState[i] ? initState[i][j] ?? 0 : 0;
+                row.push(cell);
+            }
         }
     }
-    colorTiles(state);
 
     function renderTiles() {
         for(let i = 0; i < size; i++) {
@@ -40,8 +42,10 @@ export function setupGame (size, gameContainer, initState, passCount) {
         gameContainer.appendChild(playBtn);
 
         playBtn.addEventListener('click', () => {
-            const finalState = playGame(size, initState, passCount);
-            colorTiles(finalState);
+            setInterval(() => {
+                state = playGame(state);
+                colorTiles(state);
+            }, 1000);
         });
     }
 
